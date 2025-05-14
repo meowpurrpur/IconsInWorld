@@ -1,100 +1,73 @@
 using System;
 using System.Numerics;
-using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
-using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
-using Lumina.Excel.Sheets;
-using Lumina.Excel;
 using System.Collections.Generic;
-using System.IO;
-using System.ComponentModel.Design;
-using Serilog;
-using Dalamud.Plugin.Services;
-using FFXIVClientStructs.FFXIV.Client.Game.Character;
 
-namespace QuestsInWorld.Windows;
-
-public class MainWindow : Window, IDisposable
+namespace QuestsInWorld.Windows
 {
-    private Plugin Plugin;
-    private Configuration Configuration;
-
-    public MainWindow(Plugin plugin)
-        : base("Icons In World##IconsInWorld", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
+    public class MainWindow : Window, IDisposable
     {
-        SizeConstraints = new WindowSizeConstraints
-        {
-            MinimumSize = new Vector2(650, 350),
-            MaximumSize = new Vector2(650, 350),
-        };
+        private Plugin Plugin;
+        private Configuration Configuration;
 
-        Plugin = plugin;
-        Configuration = plugin.Configuration;
+        private readonly List<CheckboxSetting> CheckboxSettings;
+
+        public MainWindow(Plugin plugin)
+            : base("Icons In World##IconsInWorld", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
+        {
+            SizeConstraints = new WindowSizeConstraints
+            {
+                MinimumSize = new Vector2(650, 350),
+                MaximumSize = new Vector2(650, 350)
+            };
+
+            Plugin = plugin;
+            Configuration = plugin.Configuration;
+
+            CheckboxSettings = new List<CheckboxSetting>
+            {
+                new CheckboxSetting("Active Quest Icons Enabled", () => Configuration.MSQIconEnabled, Value => Configuration.MSQIconEnabled = Value),
+                new CheckboxSetting("Gatherer Icons Enabled", () => Configuration.GathererIconsEnabled, Value => Configuration.GathererIconsEnabled = Value),
+                new CheckboxSetting("Treasure Coffer Icons Enabled", () => Configuration.TreasureCofferIconsEnabled, Value => Configuration.TreasureCofferIconsEnabled = Value),
+                new CheckboxSetting("Party Member Icons Enabled", () => Configuration.PartyMemberIconsEnabled, Value => Configuration.PartyMemberIconsEnabled = Value),
+                new CheckboxSetting("Summoning Bell Icons Enabled", () => Configuration.SummoningBellIconsEnabled, Value => Configuration.SummoningBellIconsEnabled = Value),
+                new CheckboxSetting("Market Board Icons Enabled", () => Configuration.MarketboardIconsEnabled, Value => Configuration.MarketboardIconsEnabled = Value),
+                new CheckboxSetting("Aetheryte Icons Enabled", () => Configuration.AetheryteIconsEnabled, Value => Configuration.AetheryteIconsEnabled = Value),
+                new CheckboxSetting("Aether Current Icons Enabled", () => Configuration.AetherCurrentIconsEnabled, Value => Configuration.AetherCurrentIconsEnabled = Value)
+            };
+        }
+
+        public void Dispose() { }
+
+        public override void Draw()
+        {
+            foreach (var Setting in CheckboxSettings)
+            {
+                bool Value = Setting.Get();
+                if (ImGui.Checkbox(Setting.Label, ref Value))
+                {
+                    Setting.Set(Value);
+                    Configuration.Save();
+                }
+            }
+        }
     }
 
-    public void Dispose() { }
-
-    public override void Draw()
+    public class CheckboxSetting
     {
-        var DrawList = ImGui.GetBackgroundDrawList();
+        public string Label { get; }
+        private Func<bool> Getter { get; }
+        private Action<bool> Setter { get; }
 
-        var MSQIconEnabled = Configuration.MSQIconEnabled;
-        if (ImGui.Checkbox("Active Quest Icons Enabled", ref MSQIconEnabled))
+        public CheckboxSetting(string label, Func<bool> getter, Action<bool> setter)
         {
-            Configuration.MSQIconEnabled = MSQIconEnabled;
-            Configuration.Save();
+            Label = label;
+            Getter = getter;
+            Setter = setter;
         }
 
-        var GathererIconsEnabled = Configuration.GathererIconsEnabled;
-        if (ImGui.Checkbox("Gatherer Icons Enabled", ref GathererIconsEnabled))
-        {
-            Configuration.GathererIconsEnabled = GathererIconsEnabled;
-            Configuration.Save();
-        }
-
-        var TreasureCofferIconsEnabled = Configuration.TreasureCofferIconsEnabled;
-        if (ImGui.Checkbox("Treasure Coffer Icons Enabled", ref TreasureCofferIconsEnabled))
-        {
-            Configuration.TreasureCofferIconsEnabled = TreasureCofferIconsEnabled;
-            Configuration.Save();
-        }
-
-        var PartyMemberIconsEnabled = Configuration.PartyMemberIconsEnabled;
-        if (ImGui.Checkbox("Party Member Icons Enabled", ref PartyMemberIconsEnabled))
-        {
-            Configuration.PartyMemberIconsEnabled = PartyMemberIconsEnabled;
-            Configuration.Save();
-        }
-
-        var SummoningBellIconsEnabled = Configuration.SummoningBellIconsEnabled;
-        if (ImGui.Checkbox("Summoning Bell Icons Enabled", ref SummoningBellIconsEnabled))
-        {
-            Configuration.SummoningBellIconsEnabled = SummoningBellIconsEnabled;
-            Configuration.Save();
-        }
-
-        var MarketboardIconsEnabled = Configuration.MarketboardIconsEnabled;
-        if (ImGui.Checkbox("Market Board Icons Enabled", ref MarketboardIconsEnabled))
-        {
-            Configuration.MarketboardIconsEnabled = MarketboardIconsEnabled;
-            Configuration.Save();
-        }
-
-        var AetheryteIconsEnabled = Configuration.AetheryteIconsEnabled;
-        if (ImGui.Checkbox("Aetheryte Icons Enabled", ref AetheryteIconsEnabled))
-        {
-            Configuration.AetheryteIconsEnabled = AetheryteIconsEnabled;
-            Configuration.Save();
-        }
-
-        var AetherCurrentIconsEnabled = Configuration.AetherCurrentIconsEnabled;
-        if (ImGui.Checkbox("Aether Current Icons Enabled", ref AetherCurrentIconsEnabled))
-        {
-            Configuration.AetherCurrentIconsEnabled = AetherCurrentIconsEnabled;
-            Configuration.Save();
-        }
+        public bool Get() => Getter();
+        public void Set(bool value) => Setter(value);
     }
 }
-
