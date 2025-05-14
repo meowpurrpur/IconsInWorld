@@ -1,0 +1,10 @@
+{
+  "Author": "meowpurrpur",
+  "Name": "Quests In World",
+  "Punchline": "Shows quest icons in world, instead of just on the map.",
+  "Description": "Shows quest icons in world, instead of just on the map.",
+  "ApplicableVersion": "any",
+  "Tags": [
+    "UI"
+  ]
+}
