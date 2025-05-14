@@ -88,6 +88,13 @@ public class MainWindow : Window, IDisposable
             Configuration.AetheryteIconsEnabled = AetheryteIconsEnabled;
             Configuration.Save();
         }
+
+        var AetherCurrentIconsEnabled = Configuration.AetherCurrentIconsEnabled;
+        if (ImGui.Checkbox("Aether Current Icons Enabled", ref AetherCurrentIconsEnabled))
+        {
+            Configuration.AetherCurrentIconsEnabled = AetherCurrentIconsEnabled;
+            Configuration.Save();
+        }
     }
 }
 

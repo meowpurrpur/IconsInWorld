@@ -132,7 +132,7 @@ public sealed class Plugin : IDalamudPlugin
                     if(Configuration.AetheryteIconsEnabled && Type.ToString() == ObjectKind.Aetheryte.ToString() && !Name.Contains("Aethernet"))
                         DrawHelper.DrawImage("Aetheryte.png", ScreenLocation, new Vector2(48, 48));
 
-                    if (Configuration.AetheryteIconsEnabled && Name == "Aether Current")
+                    if (Configuration.AetherCurrentIconsEnabled && Name == "Aether Current")
                         DrawHelper.DrawImage("AetherCurrent.png", ScreenLocation, new Vector2(32, 32));
 
                     if (!Configuration.GathererIconsEnabled) continue;

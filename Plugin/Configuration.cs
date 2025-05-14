@@ -16,6 +16,7 @@ public class Configuration : IPluginConfiguration
     public bool SummoningBellIconsEnabled { get; set; } = true;
     public bool MarketboardIconsEnabled { get; set; } = true;
     public bool AetheryteIconsEnabled { get; set; } = true;
+    public bool AetherCurrentIconsEnabled { get; set; } = true;
 
     public void Save()
     {
