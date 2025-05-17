@@ -49,5 +49,31 @@ namespace QuestsInWorld
 
             return ImageTopLeft;
         }
+
+
+        public const string TooltipSeparator = "--SEP--";
+        public static void AttachToolTip(string text) // https://github.com/Penumbra-Sync/client/blob/main/MareSynchronos/UI/UISharedService.cs#L139
+        {
+            if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+            {
+                ImGui.BeginTooltip();
+                ImGui.PushTextWrapPos(ImGui.GetFontSize() * 35f);
+                if (text.Contains(TooltipSeparator, StringComparison.Ordinal))
+                {
+                    var splitText = text.Split(TooltipSeparator, StringSplitOptions.RemoveEmptyEntries);
+                    for (int i = 0; i < splitText.Length; i++)
+                    {
+                        ImGui.TextUnformatted(splitText[i]);
+                        if (i != splitText.Length - 1) ImGui.Separator();
+                    }
+                }
+                else
+                {
+                    ImGui.TextUnformatted(text);
+                }
+                ImGui.PopTextWrapPos();
+                ImGui.EndTooltip();
+            }
+        }
     }
 }

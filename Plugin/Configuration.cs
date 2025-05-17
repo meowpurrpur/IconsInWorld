@@ -17,6 +17,7 @@ public class Configuration : IPluginConfiguration
     public bool MarketboardIconsEnabled { get; set; } = true;
     public bool AetheryteIconsEnabled { get; set; } = true;
     public bool AetherCurrentIconsEnabled { get; set; } = true;
+    public bool EventObjectIconsEnabled { get; set; } = true;
 
     public void Save()
     {

@@ -14,6 +14,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using System.Linq;
 using static Lumina.Data.Parsing.Uld.NodeData;
+using static FFXIVClientStructs.FFXIV.Client.Game.UI.ContentsFinderQueueInfo;
 
 namespace QuestsInWorld;
 
@@ -93,7 +94,7 @@ public sealed class Plugin : IDalamudPlugin
 
                 var TextPosition = Vector2.Create(
                     ScreenLocation.X - TextSize.X * 0.5f,
-                    ImageTopLeft.Y - TextSize.Y - 4f
+                    ImageTopLeft.Y - TextSize.Y - 2f
                 );
 
                 DrawHelper.DrawTextOutlined(QuestEntry.Name, TextPosition, FontSize);
@@ -132,11 +133,25 @@ public sealed class Plugin : IDalamudPlugin
                     if (Configuration.AetheryteIconsEnabled && Name.Contains("Aethernet"))
                         DrawHelper.DrawImage("Aethernet.png", ScreenLocation, new Vector2(48, 48));
 
-                    if(Configuration.AetheryteIconsEnabled && Type.ToString() == ObjectKind.Aetheryte.ToString() && !Name.Contains("Aethernet"))
+                    if (Configuration.AetheryteIconsEnabled && Type.ToString() == ObjectKind.Aetheryte.ToString() && !Name.Contains("Aethernet"))
                         DrawHelper.DrawImage("Aetheryte.png", ScreenLocation, new Vector2(48, 48));
 
                     if (Configuration.AetherCurrentIconsEnabled && Name == "Aether Current")
                         DrawHelper.DrawImage("AetherCurrent.png", ScreenLocation, new Vector2(32, 32));
+
+                    if (Configuration.EventObjectIconsEnabled && Type.ToString() == ObjectKind.EventObj.ToString())
+                    {
+                        var Font = ImGui.GetFont();
+                        var FontSize = 18f;
+                        var TextSize = ImGui.CalcTextSize(Name) * (FontSize / Font.FontSize);
+
+                        var TextPosition = Vector2.Create(
+                            ScreenLocation.X - TextSize.X * 0.5f,
+                            ScreenLocation.Y - TextSize.Y - 25f
+                        );
+
+                        DrawHelper.DrawTextOutlined(Name, TextPosition, FontSize);
+                    }
 
                     if (!Configuration.GathererIconsEnabled) continue;
 

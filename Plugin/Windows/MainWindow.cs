@@ -3,6 +3,7 @@ using System.Numerics;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using System.Collections.Generic;
+using Dalamud.Interface;
 
 namespace QuestsInWorld.Windows
 {
@@ -28,6 +29,7 @@ namespace QuestsInWorld.Windows
             CheckboxSettings = new List<CheckboxSetting>
             {
                 new CheckboxSetting("Active Quest Icons Enabled", () => Configuration.MSQIconEnabled, Value => Configuration.MSQIconEnabled = Value),
+                new CheckboxSetting("Event Object Text Enabled", () => Configuration.EventObjectIconsEnabled, Value => Configuration.EventObjectIconsEnabled = Value, "Example of an Event Object: A 'destination' interactable."),
                 new CheckboxSetting("Gatherer Icons Enabled", () => Configuration.GathererIconsEnabled, Value => Configuration.GathererIconsEnabled = Value),
                 new CheckboxSetting("Treasure Coffer Icons Enabled", () => Configuration.TreasureCofferIconsEnabled, Value => Configuration.TreasureCofferIconsEnabled = Value),
                 new CheckboxSetting("Party Member Icons Enabled", () => Configuration.PartyMemberIconsEnabled, Value => Configuration.PartyMemberIconsEnabled = Value),
@@ -50,6 +52,11 @@ namespace QuestsInWorld.Windows
                     Setting.Set(Value);
                     Configuration.Save();
                 }
+
+                if(Setting.Tooltip != "")
+                {
+                    DrawHelper.AttachToolTip(Setting.Tooltip);
+                }
             }
         }
     }
@@ -57,14 +64,16 @@ namespace QuestsInWorld.Windows
     public class CheckboxSetting
     {
         public string Label { get; }
+        public string Tooltip { get; }
         private Func<bool> Getter { get; }
         private Action<bool> Setter { get; }
 
-        public CheckboxSetting(string label, Func<bool> getter, Action<bool> setter)
+        public CheckboxSetting(string label, Func<bool> getter, Action<bool> setter, string tooltip = "")
         {
             Label = label;
             Getter = getter;
             Setter = setter;
+            Tooltip = tooltip;
         }
 
         public bool Get() => Getter();
