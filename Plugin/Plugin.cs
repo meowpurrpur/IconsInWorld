@@ -13,6 +13,7 @@ using System;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using System.Linq;
+using static Lumina.Data.Parsing.Uld.NodeData;
 
 namespace QuestsInWorld;
 
@@ -76,13 +77,15 @@ public sealed class Plugin : IDalamudPlugin
 
             foreach (var QuestEntry in AllQuestManager.GameQuests)
             {
+                var IconID = ((int)QuestEntry.Data.EventIconType.Value.NpcIconAvailable + 1).ToString();
+
                 var RawLocation = QuestEntry.GetLocationRaw(QuestEntry.Step);
                 if (RawLocation.Map.Value.Id.ToString() != CurrentMapID) continue;
 
                 var OnScreen = GameGui.WorldToScreen(QuestEntry.GetObjectivePosition(QuestEntry.Step), out var ScreenLocation);
                 if (!OnScreen || !Configuration.MSQIconEnabled) continue;
 
-                var ImageTopLeft = DrawHelper.DrawImage("MSQ.png", ScreenLocation, new Vector2(84, 84));
+                var ImageTopLeft = DrawHelper.DrawImage($"QuestIcons\\0{IconID}_hr1.png", ScreenLocation, new Vector2(84, 84));
 
                 var Font = ImGui.GetFont();
                 var FontSize = 18f;
@@ -97,9 +100,9 @@ public sealed class Plugin : IDalamudPlugin
 
             }
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            Log.Warning("Failed to draw quest icons");
+            Log.Warning($"Failed to draw quest icons {e.ToString()}");
         }
 
         try
@@ -151,9 +154,9 @@ public sealed class Plugin : IDalamudPlugin
                 }
             }
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            Log.Warning("Failed to draw object icons");
+            Log.Warning($"Failed to draw object icons {e.ToString()}");
         }
 
         try
@@ -189,9 +192,9 @@ public sealed class Plugin : IDalamudPlugin
                 }
             }
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            Log.Warning("Failed to draw party icons");
+            Log.Warning($"Failed to draw party icons {e.ToString()}");
         }
 
         WindowSystem.Draw();
